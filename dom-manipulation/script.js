@@ -1,4 +1,5 @@
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+const syncInterval = 30000;
 
 async function fetchQuotesFromServer() {
   try {
@@ -39,6 +40,7 @@ async function syncQuotes() {
     alert("New quotes synced from the server!");
   }
 
+  // Check for conflicts (server takes precedence)
   const conflicts = localQuotes.filter((lq) =>
     serverQuotes.some(
       (sq) => sq.text === lq.text && sq.category !== lq.category
@@ -47,26 +49,6 @@ async function syncQuotes() {
   if (conflicts.length > 0) {
     alert("Conflicts detected! Server data was applied.");
     localStorage.setItem("quotes", JSON.stringify(serverQuotes));
-  }
-}
-
-function addQuote() {
-  const newQuoteText = document.getElementById("newQuoteText");
-  const newQuoteCategory = document.getElementById("newQuoteCategory");
-
-  const text = newQuoteText.value.trim();
-  const category = newQuoteCategory.value.trim();
-
-  if (text && category) {
-    const newQuote = { text, category };
-    quotes.push(newQuote);
-    saveQuotes();
-    populateCategories();
-    newQuoteText.value = "";
-    newQuoteCategory.value = "";
-    filterQuotes();
-    postQuoteToServer(newQuote);
-    alert("Please enter both quote text and category.");
   }
 }
 
