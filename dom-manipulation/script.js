@@ -1,5 +1,4 @@
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
-const syncInterval = 30000;
 
 async function fetchQuotesFromServer() {
   try {
@@ -7,7 +6,7 @@ async function fetchQuotesFromServer() {
     if (!response.ok) throw new Error("Failed to fetch from server");
 
     const serverQuotes = await response.json();
-    return serverQuotes.map((q) => ({ text: q.title, category: "General" })); // Adjust format
+    return serverQuotes.map((q) => ({ text: q.title, category: "General" }));
   } catch (error) {
     console.error("Fetch Error:", error);
     return [];
@@ -30,23 +29,25 @@ async function postQuoteToServer(quote) {
 async function syncQuotes() {
   const serverQuotes = await fetchQuotesFromServer();
   let localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
-}
 
-const newQuotes = serverQuotes.filter(
-  (sq) => !localQuotes.some((lq) => lq.text === sq.text)
-);
-if (newQuotes.length > 0) {
-  localQuotes = [...localQuotes, ...newQuotes];
-  localStorage.setItem("quotes", JSON.stringify(localQuotes));
-  alert("New quotes synced from the server!");
-}
+  const newQuotes = serverQuotes.filter(
+    (sq) => !localQuotes.some((lq) => lq.text === sq.text)
+  );
+  if (newQuotes.length > 0) {
+    localQuotes = [...localQuotes, ...newQuotes];
+    localStorage.setItem("quotes", JSON.stringify(localQuotes));
+    alert("New quotes synced from the server!");
+  }
 
-const conflicts = localQuotes.filter((lq) =>
-  serverQuotes.some((sq) => sq.text === lq.text && sq.category !== lq.category)
-);
-if (conflicts.length > 0) {
-  alert("Conflicts detected! Server data was applied.");
-  localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+  const conflicts = localQuotes.filter((lq) =>
+    serverQuotes.some(
+      (sq) => sq.text === lq.text && sq.category !== lq.category
+    )
+  );
+  if (conflicts.length > 0) {
+    alert("Conflicts detected! Server data was applied.");
+    localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+  }
 }
 
 function addQuote() {
@@ -64,9 +65,7 @@ function addQuote() {
     newQuoteText.value = "";
     newQuoteCategory.value = "";
     filterQuotes();
-
     postQuoteToServer(newQuote);
-  } else {
     alert("Please enter both quote text and category.");
   }
 }
