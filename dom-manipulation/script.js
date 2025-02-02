@@ -17,11 +17,15 @@ const quotes = savedQuotes || [
   },
 ];
 
+const quoteDisplay = document.getElementById("quoteDisplay");
+const newQuoteBtn = document.getElementById("newQuote");
+const exportBtn = document.getElementById("exportQuotes");
+const importInput = document.getElementById("importFile");
+
 function saveQuotes() {
   localStorage.setItem(quotesKey, JSON.stringify(quotes));
 }
 
-// Function to show a random quote
 function showRandomQuote() {
   if (quotes.length === 0) {
     quoteDisplay.innerHTML = "<p>No quotes available.</p>";
@@ -52,30 +56,6 @@ function addQuote() {
   } else {
     alert("Please enter both quote text and category.");
   }
-}
-
-function createAddQuoteForm() {
-  const formContainer = document.createElement("div");
-
-  const inputText = document.createElement("input");
-  inputText.id = "newQuoteText";
-  inputText.type = "text";
-  inputText.placeholder = "Enter a new quote";
-
-  const inputCategory = document.createElement("input");
-  inputCategory.id = "newQuoteCategory";
-  inputCategory.type = "text";
-  inputCategory.placeholder = "Enter quote category";
-
-  const addButton = document.createElement("button");
-  addButton.textContent = "Add Quote";
-  addButton.addEventListener("click", addQuote);
-
-  formContainer.appendChild(inputText);
-  formContainer.appendChild(inputCategory);
-  formContainer.appendChild(addButton);
-
-  document.body.appendChild(formContainer);
 }
 
 function exportToJsonFile() {
@@ -118,9 +98,11 @@ if (newQuoteBtn) {
   newQuoteBtn.addEventListener("click", showRandomQuote);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  createAddQuoteForm();
+if (exportBtn) {
+  exportBtn.addEventListener("click", exportToJsonFile);
+}
 
+document.addEventListener("DOMContentLoaded", () => {
   const lastQuote = sessionStorage.getItem(lastViewedQuoteKey);
   if (lastQuote) {
     const quote = JSON.parse(lastQuote);
@@ -128,16 +110,4 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showRandomQuote();
   }
-
-  const exportButton = document.createElement("button");
-  exportButton.textContent = "Export Quotes";
-  exportButton.addEventListener("click", exportToJsonFile);
-  document.body.appendChild(exportButton);
-
-  const importInput = document.createElement("input");
-  importInput.type = "file";
-  importInput.id = "importFile";
-  importInput.accept = ".json";
-  importInput.addEventListener("change", importFromJsonFile);
-  document.body.appendChild(importInput);
 });
