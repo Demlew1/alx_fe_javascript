@@ -1,8 +1,10 @@
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
-const syncInterval = 30000; //
+const syncInterval = 30000;
 let quotes = JSON.parse(localStorage.getItem("quotes")) || [];
 
 function showNotification(message, type = "success") {
+  alert(message);
+
   const notification = document.getElementById("notification");
   notification.textContent = message;
   notification.style.display = "block";
@@ -60,6 +62,7 @@ async function syncQuotes() {
   );
   if (conflicts.length > 0) {
     showNotification("Conflicts detected! Server data applied.", "error");
+    alert("Data conflict detected! Server data has been applied.");
     localStorage.setItem("quotes", JSON.stringify(serverQuotes));
   }
 }
@@ -86,8 +89,10 @@ function addQuote() {
     document.getElementById("newQuoteCategory").value = "";
     filterQuotes();
     postQuoteToServer(newQuote);
+    alert("New quote added successfully!");
   } else {
     showNotification("Please enter both quote text and category.", "error");
+    alert("Error: Please enter both quote text and category.");
   }
 }
 
@@ -121,8 +126,10 @@ function exportToJsonFile() {
   a.href = URL.createObjectURL(blob);
   a.download = "quotes.json";
   a.click();
+  alert("Quotes exported successfully!");
 }
 
+// Import quotes from JSON file
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
   fileReader.onload = function (event) {
@@ -131,8 +138,10 @@ function importFromJsonFile(event) {
       quotes.push(...importedQuotes);
       saveQuotes();
       showNotification("Quotes imported successfully!");
+      alert("Quotes imported successfully!");
     } catch (error) {
       showNotification("Invalid JSON file.", "error");
+      alert("Error: Invalid JSON file."); //
     }
   };
   fileReader.readAsText(event.target.files[0]);
